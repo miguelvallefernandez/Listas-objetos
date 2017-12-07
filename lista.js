@@ -6,8 +6,13 @@ function List(length) {
     this.list = [];
 
     //FUNCTIONS
+
+    this.size = function () {
+        return this.list.length;
+    }
+
     this.isEmpty = function () {
-        if (this.list > 0) {
+        if (this.size() > 0) {
             return false;
         }
         else {
@@ -22,9 +27,7 @@ function List(length) {
             return false;
         }
     }
-    this.size = function () {
-        return this.list.length;
-    }
+
     this.add = function (elem) {
         this.list.push(elem);
         return this.size();
@@ -38,29 +41,29 @@ function List(length) {
     }
     this.toString = function () {
 
-        var finalText="";
+        var finalText = "";
         for (var i = 0; i < this.size(); i++) {
             finalText += this.list[i].name + " " + this.list[i].surname + ", ";
         }
         return finalText;
     }
     this.indexOf = function (elem) {
-        var i=0;
-        var find=-1;
-        for(i=0;i<this.size();i++){
-            if(this.list[i].name==elem || this.list[i].surname==elem){
-                find=i;
+        var i = 0;
+        var find = -1;
+        for (i = 0; i < this.size(); i++) {
+            if (this.list[i].name == elem || this.list[i].surname == elem) {
+                find = i;
             }
         }
         return find;
 
     }
     this.lastIndexOf = function (elem) {
-        var i=0;
-        var find=-1;
-        for(i=this.size();i>0;i--){
-            if(list[i].name==elem || list[i].surname==elem){
-                find=i;
+        var i = 0;
+        var find = -1;
+        for (i = this.size(); i > 0; i--) {
+            if (list[i].name == elem || list[i].surname == elem) {
+                find = i;
             }
         }
         return find;
