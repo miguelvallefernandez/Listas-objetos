@@ -102,7 +102,7 @@ function List(length) {
             var i = 0;
             var find = -1;
             for (i = 0; i < this.size(); i++) {
-                if (this.list[i].name == elem || this.list[i].surname == elem) {
+                if (this.list[i].name === elem.name || this.list[i].surname === elem.surname) {
                     find = i;
                 }
             }
@@ -118,7 +118,7 @@ function List(length) {
             var i = 0;
             var find = -1;
             for (i = this.size(); i > 0; i--) {
-                if (list[i].name == elem || list[i].surname == elem) {
+                if (this.list[i].name === elem.name || this.list[i].surname === elem.surname) {
                     find = i;
                 }
             }
@@ -155,15 +155,18 @@ function List(length) {
         this.list.splice(index, 1);
         return elem;
     }
+
     this.removeElement = function (elem) {
-        if (elem instanceof Person) {
+        if(elem instanceof Person){
             this.remove(this.indexOf(elem));
-            return true;
         }
-        else {
+        else{
             throw new Error("Element is not a Person");
         }
+        return true;
     }
+
+
     this.set = function (elem, index) {
         if (elem instanceof Person) {
             var deleted = this.list[index];
@@ -231,7 +234,7 @@ function test() {
     }
 
     console.log("SET...");
-    try{
+    try {
         var person7 = new Person("Pajaro", "Loco");
         console.log(list.set(person7, 4));
     }
@@ -243,36 +246,34 @@ function test() {
 }
 
 
-test();
+var list = new List(6);
 
 
-/*
-var list;
-
-function myFunctionCreate() {
-    list = create();
+function myFunctionAdd() {
+    var name = document.getElementById("name").value;
+    var surname = document.getElementById("surname").value;
+    list.add(new Person(name, surname));
+    result.innerHTML = list.toString();
 }
 
-function myFunctionAdd(){
-    var elem = document.getElementById("introduce").value;
-    add(list,elem);
-    result.innerHTML = list;
+function myFunctionRemove() {
+    var name = document.getElementById("name").value;
+    var surname = document.getElementById("surname").value;
+    var param = new Person(name, surname);
+    list.removeElement(param);
+    result.innerHTML = list.toString();
 }
 
-function myFunctionRemove(){
-    var elem = document.getElementById("introduce").value;
-    removeElement(list,elem);
-    result.innerHTML = list;
+function myFunctionIndexOf() {
+    var name = document.getElementById("name").value;
+    var surname = document.getElementById("surname").value;
+    var per = new Person(name, surname);
+    result.innerHTML = list.indexOf(per);
 }
 
-function myFunctionIndexOf(){
-    var elem = document.getElementById("introduce").value;
-    result.innerHTML = indexOf(list,elem);
+function myFunctionLastIndexOf() {
+    var name = document.getElementById("name").value;
+    var surname = document.getElementById("surname").value;
+    var per = new Person(name, surname);
+    result.innerHTML = list.lastIndexOf(per);
 }
-
-function myFunctionLastIndexOf(){
-    var elem = document.getElementById("introduce").value;
-    result.innerHTML = lastIndexOf(list,elem);
-}
-
-*/
