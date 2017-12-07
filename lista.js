@@ -1,5 +1,20 @@
 "use strict";
 
+function MyError(message) {
+    this.name = 'Error';
+    this.message = message || 'There is an error';
+    this.stack = (new Error()).stack;
+}
+
+
+MyError.prototype = Object.create(Error.prototype);
+MyError.prototype.constructor = MyError;
+
+
+function Person(name, surname) {
+    this.name = name || "Unknown";
+    this.surname = surname || "Unknown";
+}
 
 function List(length) {
     this.max_length = length || 3;
@@ -28,19 +43,54 @@ function List(length) {
         }
     }
 
-    this.add = function (elem) {
-        this.list.push(elem);
-        return this.size();
+    this.add = function (elem) { //Esto lo he hecho para no tener que poner try-catch cada vez que lo ejecute
+        try {
+            if (this.isFull() == true) {
+                throw new Error("List if full");
+            }
+            else {
+                if (elem instanceof Person) {
+                    this.list.push(elem);
+                    return this.size();
+                }
+                else {
+                    throw new Error("This object is not a person");
+                }
+            }
+        }
+        catch (e) {
+            console.log(e.name + ": " + e.message);
+        }
     }
-    this.addAt = function (elem, index) {
-        this.list.splice(index, 0, elem);
-        return this.size();
+
+    this.addAt = function (elem, index) { //Esto lo he hecho para no tener que poner try-catch cada vez que lo ejecute
+        try {
+            if (this.isFull() == true) {
+                throw new Error("List if full");
+            }
+            else {
+                if (elem instanceof Person) {
+                    this.list.splice(index, 0, elem);
+                    return this.size();
+                }
+                else {
+                    throw new Error("This object is not a person");
+                }
+            }
+        }
+        catch (e) {
+            console.log(e.name + ": " + e.message);
+        }
     }
+
+
     this.get = function (index) {
+        if (index > this.size() || index < 0) {
+            throw new Error("Index out of limit");
+        }
         return this.list[index];
     }
     this.toString = function () {
-
         var finalText = "";
         for (var i = 0; i < this.size(); i++) {
             finalText += this.list[i].name + " " + this.list[i].surname + ", ";
@@ -48,26 +98,37 @@ function List(length) {
         return finalText;
     }
     this.indexOf = function (elem) {
-        var i = 0;
-        var find = -1;
-        for (i = 0; i < this.size(); i++) {
-            if (this.list[i].name == elem || this.list[i].surname == elem) {
-                find = i;
+        if (elem instanceof Person) {
+            var i = 0;
+            var find = -1;
+            for (i = 0; i < this.size(); i++) {
+                if (this.list[i].name == elem || this.list[i].surname == elem) {
+                    find = i;
+                }
             }
+            return find;
         }
-        return find;
+        else {
+            throw new Error("Element is not a Person");
+        }
 
     }
     this.lastIndexOf = function (elem) {
-        var i = 0;
-        var find = -1;
-        for (i = this.size(); i > 0; i--) {
-            if (list[i].name == elem || list[i].surname == elem) {
-                find = i;
+        if (elem instanceof Person) {
+            var i = 0;
+            var find = -1;
+            for (i = this.size(); i > 0; i--) {
+                if (list[i].name == elem || list[i].surname == elem) {
+                    find = i;
+                }
             }
+            return find;
         }
-        return find;
+        else {
+            throw new Error("Element is not a Person");
+        }
     }
+
     this.capacity = function () {
         return this.max_length;
     }
@@ -75,298 +136,117 @@ function List(length) {
         this.list = [];
     }
     this.firstElement = function () {
+        if (this.isEmpty()) {
+            throw new Error("List is empty");
+        }
         return this.list[0];
     }
     this.lastElement = function () {
+        if (this.isEmpty()) {
+            throw new Error("List is empty");
+        }
         return this.list[this.size()];
     }
     this.remove = function (index) {
+        if (index > this.size() || index < 0) {
+            throw new Error("Index out of limit");
+        }
         var elem = this.list[index];
         this.list.splice(index, 1);
         return elem;
     }
     this.removeElement = function (elem) {
-        this.remove(this.indexOf(elem));
-        return true;
+        if (elem instanceof Person) {
+            this.remove(this.indexOf(elem));
+            return true;
+        }
+        else {
+            throw new Error("Element is not a Person");
+        }
     }
     this.set = function (elem, index) {
-        var deleted = this.list[index];
-        this.list.splice(index, 1, elem);
-        return deleted;
+        if (elem instanceof Person) {
+            var deleted = this.list[index];
+            this.list.splice(index, 1, elem);
+            return deleted;
+        }
+        else {
+            throw new Error("Element is not a Person");
+        }
+        if (index > this.size() || index < 0) {
+            throw new Error("Index out of limit");
+        }
     }
 }
 
-
-function Person(name, surname) {
-    this.name = name || "Unknown";
-    this.surname = surname || "Unknown";
-}
-
-
-console.log("CREATE LIST & ELEMENTS...")
-var list = new List(5);
-console.log(list.add(new Person("Miguel", "Valle")));
-console.log(list.add(new Person("Alberto", "Fernandez")));
-console.log(list.add(new Person("Jesus", "Rubio")));
-console.log(list.add(new Person()));
-console.log(list.add(new Person("Rodrigo", "Rodriguez")));
-
-
-console.log("IS EMPTY...");
-console.log(list.isEmpty());
-
-console.log(list.toString());
-
-console.log("IS FULL...");
-console.log(list.isFull());
-
-console.log("REMOVE ELEMENT...");
-console.log(list.remove(4));
-
-console.log("ADDAT ELEMENT...");
-console.log(list.addAt(new Person("Jhonnie", "Walker"), 3));
-console.log(list.toString());
-
-console.log("INDEX OF...");
-console.log(list.indexOf("Walker"));
-
-console.log("GET...");
-console.log(list.get(3));
-
-console.log("SET...");
-var person7 = new Person("Pajaro", "Loco");
-console.log(list.set(person7, 4));
-console.log(list.toString());
-
-/*
-var max_length = 6;
-
-function create() {   //Crea una lista de tamaño "max_length" y la rellena de NaN
-    var list = [];
-    return list;
-}
-
-function isEmpty(list) {
-    var empty = false;
-    if (isNaN(list[0])) {
-        empty = true;
-    }
-    return empty;
-}
-
-function isFull(list) {
-    var full = false;
-    if (!isNaN(list[max_length - 1])) {
-        full = true;
-    }
-    return full;
-}
-
-function size(list) {
-    return list.length;
-}
-
-
-function add(list, elem) {
-    if (isNaN(elem)) {
-        throw "Element is not a number";
-    }
-    if (isFull(list)) {
-        throw "List is full";
-    }
-    list.push(elem);
-    return size(list);
-}
-
-function addAt(list, elem, index) {
-    if (isNaN(elem)) {
-        throw "Element is not a number";
-    }
-    if (isFull(list)) {
-        throw "List is full";
-    }
-    if (index < 0 || index > size(list)) {
-        throw "Out of the limit";
-    }
-    list.splice(index, 0, elem);
-}
-
-
-function get(list, index) {
-    if (index < 0 || index > size(list)) {
-        throw "Out of the limit";
-    }
-    return list[index];
-}
-
-
-function toString(list) {
-    return list.toString();
-}
-
-function indexOf(list, elem) {
-    if (isNaN(elem)) {
-        throw "Element is not a number";
-    }
-    return list.indexOf(elem);
-}
-
-function lastIndexOf(list, elem) {
-    if (isNaN(elem)) {
-        throw "Element is not a number";
-    }
-    return list.lastIndexOf(elem);
-}
-
-
-function remove(list, index) {
-    var deleted = list[index];
-    if (index < 0 || index > size(list)) {
-        throw "Out of the limit";
-    }
-    list.splice(index, 1);
-    return deleted;
-}
-
-function removeElement(list, elem) {
-    if (isNaN(elem)) {
-        throw "Element is not a number";
-        return false;
-    }
-    remove(list, indexOf(list, elem));
-    return true;
-}
-
-
-function firstElement(list) {
-    if (isEmpty(list)) {
-        throw "List is empty";
-    }
-    else {
-        return list[0];
-    }
-
-}
-
-function lastElement(list) {
-    if (isEmpty(list)) {
-        throw "List is empty";
-    }
-    else {
-        return list[size(list) - 1];
-    }
-}
-
-function set(list, elem, index) {
-    var deleleted = list[index];
-    if (isNaN(elem)) {
-        throw "Element is not a number";
-    }
-    if (index < 0 || index > size(list)) {
-        throw "Out of the limit";
-    }
-    list.splice(index, 1, elem);
-    return deleleted;
-}
 
 function test() {
+    console.log("CREATE LIST & ELEMENTS...")
+    var list = new List(5);
 
-    var list = create();
+    console.log(list.add(new Person("Miguel", "Valle")));
+    console.log(list.add(new Object("a")));
+    console.log(list.add(new Person("Alberto", "Fernandez")));
+    console.log(list.add(new Person("Jesus", "Rubio")));
+    console.log(list.add(new Person()));
+    console.log(list.add(new Person("Rodrigo", "Rodriguez")));
+    console.log(list.add(new Person("Este", "Da Error")));
 
-    console.log("IS EMPTY: ");
+
+    console.log("IS EMPTY...");
+    console.log(list.isEmpty());
+
+    console.log(list.toString());
+
+    console.log("IS FULL...");
+    console.log(list.isFull());
+
+    console.log("REMOVE ELEMENT...");
     try {
-        console.log(isEmpty(list));
+        console.log(list.remove(4));
     }
-    catch (error) {
-        console.log(error);
+    catch (e) {
+        console.log(e.name + ": " + e.message);
     }
 
 
-    console.log("ADD:");
+    console.log("ADDAT ELEMENT...");
+    console.log(list.addAt(new Person("Jhonnie", "Walker"), 3));
+    console.log(list.toString());
+
+    console.log("INDEX OF...");
     try {
-        add(list, 1);
-        add(list, 2);
-        add(list, 3);
-        add(list, 4);
-        add(list, 5);
+        console.log(list.indexOf("Walker"));
     }
-    catch (error) {
-        console.log(error);
+    catch (e) {
+        console.log(e.name + ": " + e.message);
     }
 
-
-    console.log(list);
-
-
-    console.log("ADD AT: ");
+    console.log("GET...");
     try {
-        addAt(list, 8, 2);
+        console.log(list.get(3));
     }
-    catch (error) {
-        console.log(error);
-    }
-
-    console.log(list);
-
-    console.log("GET:");
-    try {
-        console.log(get(list, 2));
-    }
-    catch (error) {
-        console.log(error);
+    catch (e) {
+        console.log(e.name + ": " + e.message);
     }
 
-    console.log("TO STRING: ")
-    try {
-        console.log(toString(list));
+    console.log("SET...");
+    try{
+        var person7 = new Person("Pajaro", "Loco");
+        console.log(list.set(person7, 4));
     }
-    catch (error) {
-        console.log(error);
-    }
-
-    console.log("INDEXOF: ");
-    try {
-        console.log(indexOf(list, 8));
-    }
-    catch (error) {
-        console.log(error);
+    catch (e) {
+        console.log(e.name + ": " + e.message);
     }
 
-    console.log("LASTINDEXOF: ");
-    try {
-        console.log(lastIndexOf(list, 8));
-    }
-    catch (error) {
-        console.log(error);
-    }
-
-    console.log("REMOVE: ");
-    try {
-        console.log(remove(list, 2));
-    }
-    catch (error) {
-        console.log(error);
-    }
-
-    console.log("REMOVE ELEMENT: ");
-    try {
-        console.log(removeElement(list, 2));
-    }
-    catch (error) {
-        console.log(error);
-    }
-
-    console.log("SET: ");
-    try {
-        console.log(set(list, 8, 1));
-    }
-    catch (error) {
-        console.log(error);
-    }
-    console.log(list);
-
+    console.log(list.toString());
 }
 
+
+test();
+
+
+/*
 var list;
 
 function myFunctionCreate() {
